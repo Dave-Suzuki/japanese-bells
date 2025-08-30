@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Bells - 日本の鐘</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: radial-gradient(ellipse at top, #1a1f3a 0%, #0a0e27 50%, #050714 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Starfield animation */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Falling cherry blossoms */
+        .petals-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .petal {
+            position: absolute;
+            width: 12px;
+            height: 10px;
+            background: radial-gradient(ellipse, rgba(255,182,193,0.9) 0%, rgba(255,192,203,0.6) 70%, transparent 100%);
+            border-radius: 0 100% 0 100%;
+            animation: petalFall 8s linear;
+            pointer-events: none;
+        }
+
+        @keyframes petalFall {
+            0% {
+                transform: translateY(-10px) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 700px;
+            padding: 20px;
+        }
+
+        /* Minimal header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 200;
+            letter-spacing: 2px;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 0.7rem;
+            opacity: 0.4;
+            font-weight: 300;
+        }
+
+        /* Main instrument panel - centered and minimal */
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* Instrument selector - horizontal minimal tabs */
+        .instrument-selector {
+            display: flex;
+            gap: 2px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 2px;
+        }
+
+        .instrument-tab {
+            padding: 8px 20px;
+            background: transparent;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            font-weight: 300;
+        }
+
+        .instrument-tab:hover {
+            opacity: 0.7;
+        }
+
+        .instrument-tab.active {
+            background: rgba(255,255,255,0.08);
+            opacity: 1;
+        }
+
+        /* Compact keyboard */
+        .keyboard-container {
+            width: 100%;
+        }
+
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 4px;
+        }
+
+        .key {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+
+        .key.spacer {
+            width: 18px;
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .key.space {
+            width: 200px;
+            opacity: 0.3;
+        }
+
+        .key:hover:not(.spacer) {
+            background: rgba(255,255,255,0.05);
+            transform: translateY(-1px);
+        }
+
+        .key.active {
+            background: rgba(255,215,0,0.15);
+            border-color: rgba(255,215,0,0.3);
+            transform: scale(0.95);
+        }
+
+        .key.sustained {
+            background: rgba(255,215,0,0.1);
+            border-color: rgba(255,215,0,0.25);
+        }
+
+        .key.sustained::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,215,0,0.6);
+            border-radius: 50%;
+        }
+
+        .key-label {
+            font-size: 0.75rem;
+            font-weight: 300;
+            opacity: 0.6;
+        }
+
+        .key-note {
+            font-size: 0.5rem;
+            opacity: 0.3;
+            margin-top: 1px;
+        }
+
+        /* Minimal controls strip */
+        .controls-strip {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            padding: 15px 25px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+            z-index: 11;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .control-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.4;
+        }
+
+        .control-value {
+            font-size: 0.65rem;
+            opacity: 0.6;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Minimal knob control */
+        .knob {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .knob::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 8px;
+            background: rgba(255,215,0,0.6);
+            border-radius: 1px;
+        }
+
+        /* Scale selector - minimal dropdown style */
+        .scale-selector {
+            position: relative;
+        }
+
+        .scale-current {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .scale-dropdown {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .scale-dropdown.active {
+            display: block;
+        }
+
+        .scale-option {
+            padding: 8px 16px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .scale-option:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .scale-option.active {
+            background: rgba(255,215,0,0.1);
+        }
+
+        /* Octave buttons */
+        .octave-control {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .octave-btn {
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all 0.15s;
+        }
+
+        .octave-btn:hover {
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Info text */
+        .info {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            opacity: 0.3;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        /* Sustain indicator */
+        .sustain-dot {
+            width: 6px;
+            height: 6px;
+            background: rgba(255,215,0,0.3);
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .sustain-dot.active {
+            background: rgba(255,215,0,0.8);
+            box-shadow: 0 0 8px rgba(255,215,0,0.5);
+        }
+
+        /* Hidden range inputs for knobs */
+        .hidden-slider {
+            display: none;
+        }
+
+        /* MIDI indicator */
+        .midi-indicator {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 6px 12px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            font-size: 0.65rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .midi-indicator.active {
+            opacity: 0.5;
+        }
+
+        .midi-indicator.connected {
+            opacity: 0.7;
+            color: rgba(255,215,0,0.8);
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 15px;
+            }
+
+            .header {
+                margin-bottom: 30px;
+            }
+
+            .main-panel {
+                gap: 25px;
+            }
+
+            .instrument-selector {
+                gap: 1px;
+                padding: 1px;
+            }
+
+            .instrument-tab {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+            }
+
+            .key {
+                width: 26px;
+                height: 32px;
+                border-radius: 6px;
+            }
+
+            .key-label {
+                font-size: 0.65rem;
+            }
+
+            .key-note {
+                font-size: 0.45rem;
+            }
+
+            .key.spacer {
+                width: 13px;
+            }
+
+            .key.space {
+                width: 140px;
+            }
+
+            .keyboard-row {
+                gap: 3px;
+            }
+
+            .controls-strip {
+                bottom: 20px;
+                gap: 15px;
+                padding: 10px 15px;
+                border-radius: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+                max-width: 90%;
+            }
+
+            .control-group {
+                gap: 4px;
+            }
+
+            .control-label {
+                font-size: 0.55rem;
+            }
+
+            .knob {
+                width: 28px;
+                height: 28px;
+            }
+
+            .knob::after {
+                top: 5px;
+                height: 6px;
+            }
+
+            .scale-current {
+                padding: 5px 10px;
+                font-size: 0.65rem;
+                min-width: 70px;
+            }
+
+            .info {
+                font-size: 0.6rem;
+                padding: 0 15px;
+                top: 20px;
+            }
+
+            .midi-indicator {
+                right: 15px;
+                top: 20px;
+                font-size: 0.6rem;
+                padding: 4px 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .key {
+                width: 22px;
+                height: 28px;
+            }
+
+            .key.space {
+                width: 100px;
+            }
+
+            .key-label {
+                font-size: 0.6rem;
+            }
+
+            .key-note {
+                display: none;
+            }
+
+            .controls-strip {
+                gap: 10px;
+                padding: 8px 12px;
+            }
+
+            .knob {
+                width: 24px;
+                height: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Starfield background -->
+    <div class="starfield" id="starfield"></div>
+    
+    <!-- Falling cherry blossom petals -->
+    <div class="petals-container" id="petals-container"></div>
+
+    <!-- MIDI indicator -->
+    <div class="midi-indicator" id="midi-indicator">MIDI</div>
+
+    <!-- Info text -->
+    <div class="info">ctrl/cmd + key for sustain • shift for accent</div>
+
+    <div class="app-container">
+        <!-- Minimal header -->
+        <div class="header">
+            <div class="title">日本の鐘</div>
+            <div class="subtitle">Japanese Bells</div>
+        </div>
+
+        <!-- Main panel -->
+        <div class="main-panel">
+            <!-- Instrument selector -->
+            <div class="instrument-selector">
+                <div class="instrument-tab active" data-instrument="furin">Fūrin</div>
+                <div class="instrument-tab" data-instrument="kagura">Kagura</div>
+                <div class="instrument-tab" data-instrument="orin">Orin</div>
+                <div class="instrument-tab" data-instrument="bonsho">Bonshō</div>
+            </div>
+
+            <!-- Keyboard -->
+            <div class="keyboard-container">
+                <div class="keyboard" id="keyboard">
+                    <!-- Keyboard rows will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimal controls strip -->
+    <div class="controls-strip">
+        <div class="control-group">
+            <div class="control-label">Scale</div>
+            <div class="scale-selector">
+                <div class="scale-current" id="scale-current">Hirajoshi</div>
+                <div class="scale-dropdown" id="scale-dropdown">
+                    <div class="scale-option active" data-scale="hirajoshi">Hirajoshi</div>
+                    <div class="scale-option" data-scale="yo">Yo</div>
+                    <div class="scale-option" data-scale="in">In</div>
+                    <div class="scale-option" data-scale="iwato">Iwato</div>
+                    <div class="scale-option" data-scale="akebono">Akebono</div>
+                    <div class="scale-option" data-scale="okinawa">Okinawa</div>
+                    <div class="scale-option" data-scale="chromatic">Chromatic</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="control-label">Vol</div>
+            <div class="knob" id="volume-knob"></div>
+            <input type="range" class="hidden-slider" id="volume-slider" min="0" max="100" value="70">
+        </div>
+
+        <div class="control-group">
+            <div class="control-label">Reverb</div>
+            <div class="knob" id="reverb-knob"></div>
+            <input type="range" class="hidden-slider" id="reverb-slider" min="0" max="100" value="30">
+        </div>
+
+        <div class="control-group">
+            <div class="control-label">Harm</div>
+            <div class="knob" id="harmonics-knob"></div>
+            <input type="range" class="hidden-slider" id="harmonics-slider" min="0" max="100" value="60">
+        </div>
+
+        <div class="control-group">
+            <div class="control-label">Sustain</div>
+            <div class="knob" id="sustain-knob"></div>
+            <input type="range" class="hidden-slider" id="sustain-slider" min="0" max="100" value="50">
+        </div>
+
+        <div class="control-group">
+            <div class="control-label">Octave</div>
+            <div class="octave-control">
+                <button class="octave-btn" id="octave-down">−</button>
+                <span class="control-value" id="octave-value">0</span>
+                <button class="octave-btn" id="octave-up">+</button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="sustain-dot" id="sustain-indicator"></div>
+        </div>
+    </div>
+
+    <script>
+        // Audio context
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioContext;
+
+        // Japanese scales (intervals from root)
+        const scales = {
+            hirajoshi: {
+                name: 'Hirajoshi',
+                intervals: [0, 2, 3, 7, 8], // C D Eb G Ab
+                notes: 'C, D, E♭, G, A♭'
+            },
+            yo: {
+                name: 'Yo',
+                intervals: [0, 2, 5, 7, 9], // C D F G A
+                notes: 'C, D, F, G, A'
+            },
+            in: {
+                name: 'In', 
+                intervals: [0, 1, 5, 7, 10], // C Db F G Bb
+                notes: 'C, D♭, F, G, B♭'
+            },
+            iwato: {
+                name: 'Iwato',
+                intervals: [0, 1, 5, 6, 10], // C Db F Gb Bb
+                notes: 'C, D♭, F, G♭, B♭'
+            },
+            akebono: {
+                name: 'Akebono',
+                intervals: [0, 2, 3, 7, 9], // C D Eb G A
+                notes: 'C, D, E♭, G, A'
+            },
+            okinawa: {
+                name: 'Okinawa',
+                intervals: [0, 4, 5, 7, 11], // C E F G B
+                notes: 'C, E, F, G, B'
+            },
+            chromatic: {
+                name: 'Chromatic',
+                intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                notes: 'All 12 tones'
+            }
+        };
+
+        let currentScale = 'hirajoshi';
+        let currentInstrument = 'furin';
+        let masterVolume = 0.7;
+        let octaveShift = 0;
+        let sustainLevel = 0.5;
+        let reverbLevel = 0.3;
+        let harmonicsLevel = 0.6;
+        const sustainedNotes = new Map();
+        
+        // Global reverb node
+        let reverbNode = null;
+
+        const baseFrequency = 261.63; // C4
+
+        // Bell configurations
+        const bellTypes = {
+            furin: {
+                name: 'Fūrin',
+                baseOctave: 1,  // Lowered from 2
+                overtones: [1.0, 2.5, 4.2, 6.8],
+                decay: 2.0,
+                attack: 0.001,
+                brightness: 0.9,
+                waveType: 'triangle'
+            },
+            kagura: {
+                name: 'Kagura',
+                baseOctave: 1,
+                overtones: [1.0, 2.1, 3.4, 5.2],
+                decay: 2.5,
+                attack: 0.002,
+                brightness: 0.7,
+                waveType: 'sine'
+            },
+            orin: {
+                name: 'Orin',
+                baseOctave: 0,
+                overtones: [1.0, 2.76, 5.40, 8.93],
+                decay: 3.0,
+                attack: 0.01,
+                brightness: 0.5,
+                waveType: 'sine'
+            },
+            bonsho: {
+                name: 'Bonshō',
+                baseOctave: -2,
+                overtones: [1.0, 2.0, 2.4, 3.0, 4.2],
+                decay: 5.0,
+                attack: 0.05,
+                brightness: 0.3,
+                waveType: 'sine'
+            }
+        };
+
+        // Keyboard layout - two rows only
+        const keyboardLayout = [
+            ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
+            ['Caps', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'"],
+            ['Space']
+        ];
+
+        // Create starfield
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 2 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                star.style.animationDuration = Math.random() * 3 + 2 + 's';
+                starfield.appendChild(star);
+            }
+        }
+
+        // Create falling cherry blossom petal
+        function createFallingPetal(x) {
+            const container = document.getElementById('petals-container');
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.left = (x || Math.random() * window.innerWidth) + 'px';
+            petal.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            
+            // Random size variation
+            const size = Math.random() * 0.5 + 0.8;
+            petal.style.transform = `scale(${size})`;
+            
+            container.appendChild(petal);
+            
+            setTimeout(() => petal.remove(), 10000);
+        }
+
+        // Create ambient falling petals
+        function createAmbientPetals() {
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    createFallingPetal();
+                }
+            }, 2000);
+        }
+
+        // Initialize audio context
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new AudioContext();
+                
+                // Create reverb using convolver
+                reverbNode = audioContext.createConvolver();
+                
+                // Create impulse response for reverb
+                const length = audioContext.sampleRate * 2;
+                const impulse = audioContext.createBuffer(2, length, audioContext.sampleRate);
+                
+                for (let channel = 0; channel < 2; channel++) {
+                    const channelData = impulse.getChannelData(channel);
+                    for (let i = 0; i < length; i++) {
+                        channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2);
+                    }
+                }
+                
+                reverbNode.buffer = impulse;
+                reverbNode.connect(audioContext.destination);
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        // Get frequency for note
+        function getFrequency(noteIndex) {
+            const bell = bellTypes[currentInstrument];
+            const scale = scales[currentScale];
+            
+            let semitones;
+            if (currentScale === 'chromatic') {
+                semitones = noteIndex;
+            } else {
+                const scaleIntervals = scale.intervals;
+                const scaleLength = scaleIntervals.length;
+                const octaveOffset = Math.floor(noteIndex / scaleLength);
+                const noteInScale = noteIndex % scaleLength;
+                semitones = scaleIntervals[noteInScale] + (octaveOffset * 12);
+            }
+            
+            const totalOctaveShift = bell.baseOctave + octaveShift;
+            return baseFrequency * Math.pow(2, totalOctaveShift) * Math.pow(2, semitones / 12);
+        }
+
+        // Get note name
+        function getNoteName(noteIndex) {
+            const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            const scale = scales[currentScale];
+            
+            if (currentScale === 'chromatic') {
+                return noteNames[noteIndex % 12];
+            } else {
+                const scaleIntervals = scale.intervals;
+                const scaleLength = scaleIntervals.length;
+                const octaveOffset = Math.floor(noteIndex / scaleLength);
+                const noteInScale = noteIndex % scaleLength;
+                const semitones = scaleIntervals[noteInScale] + (octaveOffset * 12);
+                return noteNames[semitones % 12];
+            }
+        }
+
+        // Play bell
+        function playBell(noteIndex, velocity = 1.0, sustain = false) {
+            if (!audioContext) return;
+            
+            const bell = bellTypes[currentInstrument];
+            const frequency = getFrequency(noteIndex);
+            const noteKey = `${currentInstrument}-${noteIndex}`;
+            
+            // Stop existing sustained note
+            if (sustainedNotes.has(noteKey)) {
+                stopSustainedNote(noteKey);
+            }
+            
+            // Create main oscillator
+            const osc = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+            
+            // Create dry and wet gain nodes for reverb
+            const dryGain = audioContext.createGain();
+            const wetGain = audioContext.createGain();
+            
+            osc.frequency.value = frequency;
+            osc.type = bell.waveType;
+            
+            filter.type = 'highshelf';
+            filter.frequency.value = 2000 + (bell.brightness * 3000);
+            filter.gain.value = bell.brightness * 10 - 5;
+            
+            // Signal routing
+            osc.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(dryGain);
+            gainNode.connect(wetGain);
+            
+            // Connect dry directly to destination
+            dryGain.connect(audioContext.destination);
+            
+            // Connect wet through reverb
+            if (reverbNode) {
+                wetGain.connect(reverbNode);
+            }
+            
+            // Set reverb mix levels
+            dryGain.gain.value = 1 - reverbLevel;
+            wetGain.gain.value = reverbLevel;
+            
+            const now = audioContext.currentTime;
+            const finalVolume = masterVolume * velocity;
+            const sustainDecay = bell.decay * (1 + sustainLevel * 2); // Extend decay based on sustain level
+            
+            if (sustain) {
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(finalVolume * 0.8, now + bell.attack);
+                osc.start(now);
+                
+                const keyElement = document.querySelector(`[data-noteindex="${noteIndex}"]`);
+                if (keyElement) {
+                    keyElement.classList.add('sustained');
+                }
+                
+                sustainedNotes.set(noteKey, {
+                    osc: osc,
+                    gain: gainNode,
+                    element: keyElement,
+                    dryGain: dryGain,
+                    wetGain: wetGain
+                });
+            } else {
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(finalVolume, now + bell.attack);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + bell.attack + sustainDecay);
+                
+                osc.start(now);
+                osc.stop(now + bell.attack + sustainDecay + 0.5);
+            }
+            
+            // Add overtones with harmonics control
+            bell.overtones.slice(1).forEach((ratio, i) => {
+                const harmonic = audioContext.createOscillator();
+                const harmonicGain = audioContext.createGain();
+                
+                const harmonicDry = audioContext.createGain();
+                const harmonicWet = audioContext.createGain();
+                
+                harmonic.frequency.value = frequency * ratio;
+                harmonic.type = 'sine';
+                harmonic.connect(harmonicGain);
+                harmonicGain.connect(harmonicDry);
+                harmonicGain.connect(harmonicWet);
+                
+                harmonicDry.connect(audioContext.destination);
+                if (reverbNode) {
+                    harmonicWet.connect(reverbNode);
+                }
+                
+                harmonicDry.gain.value = 1 - reverbLevel;
+                harmonicWet.gain.value = reverbLevel;
+                
+                const level = (0.2 / (i + 1)) * harmonicsLevel; // Apply harmonics level control
+                
+                if (sustain) {
+                    harmonicGain.gain.setValueAtTime(0, now);
+                    harmonicGain.gain.linearRampToValueAtTime(finalVolume * level * 0.6, now + bell.attack);
+                    harmonic.start(now);
+                    
+                    if (sustainedNotes.has(noteKey)) {
+                        if (!sustainedNotes.get(noteKey).harmonics) {
+                            sustainedNotes.get(noteKey).harmonics = [];
+                        }
+                        sustainedNotes.get(noteKey).harmonics.push({
+                            osc: harmonic,
+                            gain: harmonicGain,
+                            dryGain: harmonicDry,
+                            wetGain: harmonicWet
+                        });
+                    }
+                } else {
+                    harmonicGain.gain.setValueAtTime(0, now);
+                    harmonicGain.gain.linearRampToValueAtTime(finalVolume * level, now + bell.attack);
+                    harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + bell.attack + sustainDecay);
+                    harmonic.start(now);
+                    harmonic.stop(now + bell.attack + sustainDecay + 0.5);
+                }
+            });
+            
+            // Visual feedback
+            createFallingPetal();
+        }
+
+        // Stop sustained note
+        function stopSustainedNote(noteKey) {
+            if (sustainedNotes.has(noteKey)) {
+                const note = sustainedNotes.get(noteKey);
+                const now = audioContext.currentTime;
+                
+                note.gain.gain.cancelScheduledValues(now);
+                note.gain.gain.setValueAtTime(note.gain.gain.value, now);
+                note.gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                note.osc.stop(now + 0.3);
+                
+                if (note.harmonics) {
+                    note.harmonics.forEach(h => {
+                        h.gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                        h.osc.stop(now + 0.3);
+                    });
+                }
+                
+                if (note.element) {
+                    note.element.classList.remove('sustained');
+                }
+                
+                sustainedNotes.delete(noteKey);
+            }
+        }
+
+        // Create keyboard
+        function createKeyboard() {
+            const keyboard = document.getElementById('keyboard');
+            keyboard.innerHTML = '';
+            
+            let noteIndex = 0;
+            const keyMapping = new Map();
+            
+            keyboardLayout.forEach((row, rowIndex) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'keyboard-row';
+                
+                row.forEach(key => {
+                    const keyElement = document.createElement('div');
+                    
+                    if (key === 'Tab' || key === 'Caps') {
+                        keyElement.className = 'key spacer';
+                    } else if (key === 'Space') {
+                        keyElement.className = 'key space';
+                        keyElement.dataset.noteindex = noteIndex;
+                        
+                        const labelDiv = document.createElement('div');
+                        labelDiv.className = 'key-label';
+                        labelDiv.textContent = '━━━';
+                        
+                        keyElement.appendChild(labelDiv);
+                        
+                        keyMapping.set(' ', noteIndex);
+                        noteIndex++;
+                    } else {
+                        keyElement.className = 'key';
+                        keyElement.dataset.noteindex = noteIndex;
+                        
+                        const labelDiv = document.createElement('div');
+                        labelDiv.className = 'key-label';
+                        labelDiv.textContent = key.toUpperCase();
+                        
+                        const noteDiv = document.createElement('div');
+                        noteDiv.className = 'key-note';
+                        noteDiv.textContent = getNoteName(noteIndex);
+                        
+                        keyElement.appendChild(labelDiv);
+                        keyElement.appendChild(noteDiv);
+                        
+                        keyMapping.set(key.toLowerCase(), noteIndex);
+                        noteIndex++;
+                        
+                        // Mouse events
+                        keyElement.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            initAudioContext();
+                            
+                            const idx = parseInt(keyElement.dataset.noteindex);
+                            const noteKey = `${currentInstrument}-${idx}`;
+                            
+                            if (keyElement.classList.contains('sustained')) {
+                                stopSustainedNote(noteKey);
+                            } else {
+                                const sustain = e.ctrlKey || e.metaKey;
+                                playBell(idx, e.shiftKey ? 1.2 : 1.0, sustain);
+                                
+                                if (!sustain) {
+                                    keyElement.classList.add('active');
+                                    setTimeout(() => keyElement.classList.remove('active'), 200);
+                                }
+                            }
+                        });
+                    }
+                    
+                    rowDiv.appendChild(keyElement);
+                });
+                
+                keyboard.appendChild(rowDiv);
+            });
+            
+            return keyMapping;
+        }
+
+        // Initialize keyboard
+        let keyMapping = createKeyboard();
+
+        // Keyboard events
+        let sustainMode = false;
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.repeat) return;
+            
+            // Update sustain indicator
+            if (e.ctrlKey || e.metaKey) {
+                sustainMode = true;
+                document.getElementById('sustain-indicator').classList.add('active');
+            }
+            
+            const key = e.key.toLowerCase();
+            
+            if (keyMapping.has(key)) {
+                e.preventDefault();
+                initAudioContext();
+                
+                const noteIndex = keyMapping.get(key);
+                const noteKey = `${currentInstrument}-${noteIndex}`;
+                const keyElement = document.querySelector(`[data-noteindex="${noteIndex}"]`);
+                
+                if (key === ' ') {
+                    // Play harmony
+                    playBell(0, 0.4);
+                    setTimeout(() => playBell(2, 0.5), 100);
+                    setTimeout(() => playBell(4, 0.6), 200);
+                    if (currentScale !== 'chromatic') {
+                        setTimeout(() => playBell(7, 0.7), 300);
+                    }
+                    
+                    if (keyElement) {
+                        keyElement.classList.add('active');
+                        setTimeout(() => keyElement.classList.remove('active'), 400);
+                    }
+                } else {
+                    if (keyElement && keyElement.classList.contains('sustained')) {
+                        stopSustainedNote(noteKey);
+                    } else {
+                        const sustain = e.ctrlKey || e.metaKey;
+                        playBell(noteIndex, e.shiftKey ? 1.2 : 1.0, sustain);
+                        
+                        if (keyElement && !sustain) {
+                            keyElement.classList.add('active');
+                            setTimeout(() => keyElement.classList.remove('active'), 200);
+                        }
+                    }
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Control' || e.key === 'Meta') {
+                sustainMode = false;
+                document.getElementById('sustain-indicator').classList.remove('active');
+                
+                // Release all sustained notes when ctrl is released
+                sustainedNotes.forEach((note, key) => {
+                    stopSustainedNote(key);
+                });
+            }
+        });
+
+        // Instrument selector
+        document.querySelectorAll('.instrument-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Clear sustained notes when switching instruments
+                sustainedNotes.forEach((note, key) => {
+                    stopSustainedNote(key);
+                });
+                
+                document.querySelector('.instrument-tab.active').classList.remove('active');
+                tab.classList.add('active');
+                currentInstrument = tab.dataset.instrument;
+                
+                // Update keyboard note names
+                document.querySelectorAll('.key:not(.spacer)').forEach(keyElement => {
+                    if (keyElement.dataset.noteindex) {
+                        const noteIndex = parseInt(keyElement.dataset.noteindex);
+                        const noteDiv = keyElement.querySelector('.key-note');
+                        if (noteDiv && !keyElement.classList.contains('space')) {
+                            noteDiv.textContent = getNoteName(noteIndex);
+                        }
+                    }
+                });
+            });
+        });
+
+        // Scale selector dropdown
+        const scaleDropdown = document.getElementById('scale-dropdown');
+        const scaleCurrent = document.getElementById('scale-current');
+        
+        scaleCurrent.addEventListener('click', () => {
+            scaleDropdown.classList.toggle('active');
+        });
+        
+        document.querySelectorAll('.scale-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelector('.scale-option.active').classList.remove('active');
+                option.classList.add('active');
+                currentScale = option.dataset.scale;
+                scaleCurrent.textContent = scales[currentScale].name;
+                scaleDropdown.classList.remove('active');
+                
+                // Clear sustained notes when changing scale
+                sustainedNotes.forEach((note, key) => {
+                    stopSustainedNote(key);
+                });
+                
+                // Recreate keyboard for new scale
+                keyMapping = createKeyboard();
+            });
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.scale-selector')) {
+                scaleDropdown.classList.remove('active');
+            }
+        });
+
+        // Knob controls
+        function setupKnob(knobId, sliderId, callback) {
+            const knob = document.getElementById(knobId);
+            const slider = document.getElementById(sliderId);
+            let isDragging = false;
+            let startY = 0;
+            let startValue = 0;
+            
+            knob.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startY = e.clientY;
+                startValue = parseInt(slider.value);
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const delta = startY - e.clientY;
+                    const newValue = Math.max(0, Math.min(100, startValue + delta));
+                    slider.value = newValue;
+                    
+                    // Update knob rotation
+                    const rotation = (newValue / 100) * 270 - 135;
+                    knob.style.transform = `rotate(${rotation}deg)`;
+                    
+                    callback(newValue / 100);
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            
+            // Initialize knob position
+            const rotation = (parseInt(slider.value) / 100) * 270 - 135;
+            knob.style.transform = `rotate(${rotation}deg)`;
+        }
+
+        // Setup all knobs
+        setupKnob('volume-knob', 'volume-slider', (value) => {
+            masterVolume = value;
+        });
+
+        setupKnob('reverb-knob', 'reverb-slider', (value) => {
+            reverbLevel = value;
+        });
+
+        setupKnob('harmonics-knob', 'harmonics-slider', (value) => {
+            harmonicsLevel = value;
+        });
+
+        setupKnob('sustain-knob', 'sustain-slider', (value) => {
+            sustainLevel = value;
+        });
+
+        // Octave controls
+        document.getElementById('octave-up').addEventListener('click', () => {
+            if (octaveShift < 2) {
+                octaveShift++;
+                document.getElementById('octave-value').textContent = 
+                    octaveShift > 0 ? `+${octaveShift}` : octaveShift;
+            }
+        });
+
+        document.getElementById('octave-down').addEventListener('click', () => {
+            if (octaveShift > -2) {
+                octaveShift--;
+                document.getElementById('octave-value').textContent = 
+                    octaveShift > 0 ? `+${octaveShift}` : octaveShift;
+            }
+        });
+
+        // MIDI Support
+        let midiAccess = null;
+        let midiInput = null;
+        const midiNoteMap = new Map(); // Track active MIDI notes
+
+        // Initialize MIDI
+        async function initMIDI() {
+            try {
+                if (navigator.requestMIDIAccess) {
+                    midiAccess = await navigator.requestMIDIAccess();
+                    
+                    // Get inputs
+                    const inputs = midiAccess.inputs.values();
+                    for (let input of inputs) {
+                        midiInput = input;
+                        midiInput.onmidimessage = handleMIDIMessage;
+                        console.log('MIDI device connected:', input.name);
+                        
+                        // Update indicator
+                        const indicator = document.getElementById('midi-indicator');
+                        indicator.classList.add('connected');
+                        indicator.textContent = 'MIDI ✓';
+                        break; // Use first available MIDI device
+                    }
+                    
+                    // Listen for device changes
+                    midiAccess.onstatechange = (e) => {
+                        if (e.port.type === 'input') {
+                            if (e.port.state === 'connected') {
+                                e.port.onmidimessage = handleMIDIMessage;
+                                midiInput = e.port;
+                                const indicator = document.getElementById('midi-indicator');
+                                indicator.classList.add('connected');
+                                indicator.textContent = 'MIDI ✓';
+                            } else if (e.port.state === 'disconnected') {
+                                const indicator = document.getElementById('midi-indicator');
+                                indicator.classList.remove('connected');
+                                indicator.textContent = 'MIDI';
+                            }
+                        }
+                    };
+                    
+                    // Show indicator if MIDI is available
+                    document.getElementById('midi-indicator').classList.add('active');
+                }
+            } catch (error) {
+                // MIDI not available in this environment
+                console.log('MIDI not available in this environment:', error.message);
+                // Don't show MIDI indicator if it's not available
+            }
+        }
+
+        // Handle MIDI messages
+        function handleMIDIMessage(message) {
+            const [status, note, velocity] = message.data;
+            const channel = status & 0x0F;
+            const command = status & 0xF0;
+            
+            switch (command) {
+                case 0x90: // Note On
+                    if (velocity > 0) {
+                        playMIDINote(note, velocity);
+                    } else {
+                        // Note On with velocity 0 = Note Off
+                        stopMIDINote(note);
+                    }
+                    break;
+                case 0x80: // Note Off
+                    stopMIDINote(note);
+                    break;
+                case 0xB0: // Control Change
+                    handleMIDIControl(note, velocity);
+                    break;
+            }
+        }
+
+        // Play note from MIDI
+        function playMIDINote(midiNote, velocity) {
+            if (!audioContext) initAudioContext();
+            
+            // MIDI note 60 = Middle C (C4)
+            // Map MIDI note to our scale
+            const scale = scales[currentScale];
+            let noteIndex;
+            
+            if (currentScale === 'chromatic') {
+                // Direct chromatic mapping from C3 (MIDI 48)
+                noteIndex = midiNote - 48;
+            } else {
+                // Map to scale degrees
+                const scaleLength = scale.intervals.length;
+                const octaveFromC = Math.floor((midiNote - 48) / 12);
+                const noteInOctave = (midiNote - 48) % 12;
+                
+                // Find closest scale note
+                let closestNote = 0;
+                let minDistance = 12;
+                for (let i = 0; i < scaleLength; i++) {
+                    const distance = Math.abs(scale.intervals[i] - noteInOctave);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestNote = i;
+                    }
+                }
+                
+                noteIndex = octaveFromC * scaleLength + closestNote;
+            }
+            
+            // Constrain to available range
+            if (noteIndex >= 0 && noteIndex < 36) {
+                const normalizedVelocity = velocity / 127;
+                const noteKey = `${currentInstrument}-midi-${midiNote}`;
+                
+                // Check if sustain pedal is pressed (stored in midiNoteMap)
+                const sustainPedal = midiNoteMap.get('sustain') || false;
+                
+                // Play the bell
+                playBellMIDI(noteIndex, normalizedVelocity, sustainPedal, midiNote);
+                
+                // Track the MIDI note
+                midiNoteMap.set(midiNote, noteIndex);
+                
+                // Visual feedback
+                const keyElement = document.querySelector(`[data-noteindex="${noteIndex}"]`);
+                if (keyElement) {
+                    keyElement.classList.add('active');
+                }
+            }
+        }
+
+        // Stop MIDI note
+        function stopMIDINote(midiNote) {
+            const noteIndex = midiNoteMap.get(midiNote);
+            if (noteIndex !== undefined) {
+                const noteKey = `${currentInstrument}-midi-${midiNote}`;
+                const sustainPedal = midiNoteMap.get('sustain') || false;
+                
+                if (!sustainPedal) {
+                    stopSustainedNote(noteKey);
+                    
+                    // Visual feedback
+                    const keyElement = document.querySelector(`[data-noteindex="${noteIndex}"]`);
+                    if (keyElement) {
+                        keyElement.classList.remove('active');
+                    }
+                }
+                
+                midiNoteMap.delete(midiNote);
+            }
+        }
+
+        // Handle MIDI control changes
+        function handleMIDIControl(control, value) {
+            switch (control) {
+                case 64: // Sustain pedal
+                    if (value >= 64) {
+                        midiNoteMap.set('sustain', true);
+                        document.getElementById('sustain-indicator').classList.add('active');
+                    } else {
+                        midiNoteMap.set('sustain', false);
+                        document.getElementById('sustain-indicator').classList.remove('active');
+                        
+                        // Release all sustained MIDI notes
+                        midiNoteMap.forEach((noteIndex, key) => {
+                            if (typeof key === 'number') {
+                                const noteKey = `${currentInstrument}-midi-${key}`;
+                                stopSustainedNote(noteKey);
+                            }
+                        });
+                    }
+                    break;
+                case 7: // Volume
+                    masterVolume = value / 127;
+                    document.getElementById('volume-slider').value = value * 100 / 127;
+                    const rotation = (value / 127) * 270 - 135;
+                    document.getElementById('volume-knob').style.transform = `rotate(${rotation}deg)`;
+                    break;
+                case 91: // Reverb
+                    reverbLevel = value / 127;
+                    document.getElementById('reverb-slider').value = value * 100 / 127;
+                    const reverbRotation = (value / 127) * 270 - 135;
+                    document.getElementById('reverb-knob').style.transform = `rotate(${reverbRotation}deg)`;
+                    break;
+            }
+        }
+
+        // Play bell for MIDI (separate function to track MIDI notes)
+        function playBellMIDI(noteIndex, velocity = 1.0, sustain = false, midiNote) {
+            if (!audioContext) return;
+            
+            const bell = bellTypes[currentInstrument];
+            const frequency = getFrequency(noteIndex);
+            const noteKey = `${currentInstrument}-midi-${midiNote}`;
+            
+            // Stop existing sustained note
+            if (sustainedNotes.has(noteKey)) {
+                stopSustainedNote(noteKey);
+            }
+            
+            // Create main oscillator
+            const osc = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+            
+            // Create dry and wet gain nodes for reverb
+            const dryGain = audioContext.createGain();
+            const wetGain = audioContext.createGain();
+            
+            osc.frequency.value = frequency;
+            osc.type = bell.waveType;
+            
+            filter.type = 'highshelf';
+            filter.frequency.value = 2000 + (bell.brightness * 3000);
+            filter.gain.value = bell.brightness * 10 - 5;
+            
+            // Signal routing
+            osc.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(dryGain);
+            gainNode.connect(wetGain);
+            
+            // Connect dry directly to destination
+            dryGain.connect(audioContext.destination);
+            
+            // Connect wet through reverb
+            if (reverbNode) {
+                wetGain.connect(reverbNode);
+            }
+            
+            // Set reverb mix levels
+            dryGain.gain.value = 1 - reverbLevel;
+            wetGain.gain.value = reverbLevel;
+            
+            const now = audioContext.currentTime;
+            const finalVolume = masterVolume * velocity;
+            const sustainDecay = bell.decay * (1 + sustainLevel * 2);
+            
+            if (sustain) {
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(finalVolume * 0.8, now + bell.attack);
+                osc.start(now);
+                
+                const keyElement = document.querySelector(`[data-noteindex="${noteIndex}"]`);
+                if (keyElement) {
+                    keyElement.classList.add('sustained');
+                }
+                
+                sustainedNotes.set(noteKey, {
+                    osc: osc,
+                    gain: gainNode,
+                    element: keyElement,
+                    dryGain: dryGain,
+                    wetGain: wetGain
+                });
+            } else {
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(finalVolume, now + bell.attack);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + bell.attack + sustainDecay);
+                
+                osc.start(now);
+                osc.stop(now + bell.attack + sustainDecay + 0.5);
+            }
+            
+            // Add overtones with harmonics control
+            bell.overtones.slice(1).forEach((ratio, i) => {
+                const harmonic = audioContext.createOscillator();
+                const harmonicGain = audioContext.createGain();
+                
+                const harmonicDry = audioContext.createGain();
+                const harmonicWet = audioContext.createGain();
+                
+                harmonic.frequency.value = frequency * ratio;
+                harmonic.type = 'sine';
+                harmonic.connect(harmonicGain);
+                harmonicGain.connect(harmonicDry);
+                harmonicGain.connect(harmonicWet);
+                
+                harmonicDry.connect(audioContext.destination);
+                if (reverbNode) {
+                    harmonicWet.connect(reverbNode);
+                }
+                
+                harmonicDry.gain.value = 1 - reverbLevel;
+                harmonicWet.gain.value = reverbLevel;
+                
+                const level = (0.2 / (i + 1)) * harmonicsLevel;
+                
+                if (sustain) {
+                    harmonicGain.gain.setValueAtTime(0, now);
+                    harmonicGain.gain.linearRampToValueAtTime(finalVolume * level * 0.6, now + bell.attack);
+                    harmonic.start(now);
+                    
+                    if (sustainedNotes.has(noteKey)) {
+                        if (!sustainedNotes.get(noteKey).harmonics) {
+                            sustainedNotes.get(noteKey).harmonics = [];
+                        }
+                        sustainedNotes.get(noteKey).harmonics.push({
+                            osc: harmonic,
+                            gain: harmonicGain,
+                            dryGain: harmonicDry,
+                            wetGain: harmonicWet
+                        });
+                    }
+                } else {
+                    harmonicGain.gain.setValueAtTime(0, now);
+                    harmonicGain.gain.linearRampToValueAtTime(finalVolume * level, now + bell.attack);
+                    harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + bell.attack + sustainDecay);
+                    harmonic.start(now);
+                    harmonic.stop(now + bell.attack + sustainDecay + 0.5);
+                }
+            });
+            
+            // Visual feedback
+            createFallingPetal();
+        }
+
+        // Initialize
+        createStarfield();
+        createAmbientPetals();
+        initMIDI(); // Initialize MIDI support
+        
+        // Initialize audio context on first interaction  
+        document.addEventListener('click', initAudioContext, { once: true });
+    </script>
+</body>
+</html>
