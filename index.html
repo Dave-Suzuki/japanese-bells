@@ -1041,6 +1041,39 @@
                         
                         keyMapping.set(' ', noteIndex);
                         noteIndex++;
+                        
+                        // Add both mouse and touch events for space bar
+                        keyElement.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            initAudioContext();
+                            
+                            // Play harmony
+                            playBell(0, 0.4);
+                            setTimeout(() => playBell(2, 0.5), 100);
+                            setTimeout(() => playBell(4, 0.6), 200);
+                            if (currentScale !== 'chromatic') {
+                                setTimeout(() => playBell(7, 0.7), 300);
+                            }
+                            
+                            keyElement.classList.add('active');
+                            setTimeout(() => keyElement.classList.remove('active'), 400);
+                        });
+                        
+                        keyElement.addEventListener('touchstart', (e) => {
+                            e.preventDefault();
+                            initAudioContext();
+                            
+                            // Play harmony
+                            playBell(0, 0.4);
+                            setTimeout(() => playBell(2, 0.5), 100);
+                            setTimeout(() => playBell(4, 0.6), 200);
+                            if (currentScale !== 'chromatic') {
+                                setTimeout(() => playBell(7, 0.7), 300);
+                            }
+                            
+                            keyElement.classList.add('active');
+                            setTimeout(() => keyElement.classList.remove('active'), 400);
+                        });
                     } else {
                         keyElement.className = 'key';
                         keyElement.dataset.noteindex = noteIndex;
@@ -1059,7 +1092,7 @@
                         keyMapping.set(key.toLowerCase(), noteIndex);
                         noteIndex++;
                         
-                        // Mouse events
+                        // Mouse and touch events
                         keyElement.addEventListener('mousedown', (e) => {
                             e.preventDefault();
                             initAudioContext();
@@ -1077,6 +1110,23 @@
                                     keyElement.classList.add('active');
                                     setTimeout(() => keyElement.classList.remove('active'), 200);
                                 }
+                            }
+                        });
+                        
+                        // Add touch support
+                        keyElement.addEventListener('touchstart', (e) => {
+                            e.preventDefault();
+                            initAudioContext();
+                            
+                            const idx = parseInt(keyElement.dataset.noteindex);
+                            const noteKey = `${currentInstrument}-${idx}`;
+                            
+                            if (keyElement.classList.contains('sustained')) {
+                                stopSustainedNote(noteKey);
+                            } else {
+                                playBell(idx, 1.0, false);
+                                keyElement.classList.add('active');
+                                setTimeout(() => keyElement.classList.remove('active'), 200);
                             }
                         });
                     }
@@ -1214,7 +1264,7 @@
             }
         });
 
-        // Knob controls
+        // Knob controls with touch support
         function setupKnob(knobId, sliderId, callback) {
             const knob = document.getElementById(knobId);
             const slider = document.getElementById(sliderId);
@@ -1222,6 +1272,7 @@
             let startY = 0;
             let startValue = 0;
             
+            // Mouse events
             knob.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 startY = e.clientY;
@@ -1229,6 +1280,15 @@
                 e.preventDefault();
             });
             
+            // Touch events for mobile
+            knob.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                startY = e.touches[0].clientY;
+                startValue = parseInt(slider.value);
+                e.preventDefault();
+            });
+            
+            // Mouse move
             document.addEventListener('mousemove', (e) => {
                 if (isDragging) {
                     const delta = startY - e.clientY;
@@ -1243,7 +1303,34 @@
                 }
             });
             
+            // Touch move
+            document.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    const delta = startY - e.touches[0].clientY;
+                    const newValue = Math.max(0, Math.min(100, startValue + delta));
+                    slider.value = newValue;
+                    
+                    // Update knob rotation
+                    const rotation = (newValue / 100) * 270 - 135;
+                    knob.style.transform = `rotate(${rotation}deg)`;
+                    
+                    callback(newValue / 100);
+                    e.preventDefault();
+                }
+            });
+            
+            // Mouse up
             document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            
+            // Touch end
+            document.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+            
+            // Touch cancel
+            document.addEventListener('touchcancel', () => {
                 isDragging = false;
             });
             
@@ -1269,7 +1356,7 @@
             sustainLevel = value;
         });
 
-        // Octave controls
+        // Octave controls with touch support
         document.getElementById('octave-up').addEventListener('click', () => {
             if (octaveShift < 2) {
                 octaveShift++;
@@ -1284,6 +1371,14 @@
                 document.getElementById('octave-value').textContent = 
                     octaveShift > 0 ? `+${octaveShift}` : octaveShift;
             }
+        });
+        
+        // Add touch support for octave buttons
+        ['octave-up', 'octave-down'].forEach(id => {
+            document.getElementById(id).addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.target.click();
+            });
         });
 
         // MIDI Support
