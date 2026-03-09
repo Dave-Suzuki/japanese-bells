@@ -89,8 +89,8 @@
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 1200px;
-            padding: 40px 60px;
+            max-width: 1400px;
+            padding: 30px 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -132,7 +132,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 60px;
+            gap: 30px;
             width: 100%;
         }
 
@@ -170,33 +170,35 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            padding: 0 20px;
+            padding: 0;
             position: relative;
         }
 
-        /* Baseline under tines */
+        /* Water surface baseline under tines */
         .tines-container::after {
             content: '';
             position: absolute;
-            bottom: 24px;
-            left: 10%;
-            right: 10%;
-            height: 1px;
+            bottom: 38px;
+            left: 5%;
+            right: 5%;
+            height: 2px;
             background: linear-gradient(
                 to right,
                 transparent,
-                rgba(255, 255, 255, 0.08),
-                rgba(255, 215, 0, 0.1),
-                rgba(255, 255, 255, 0.08),
+                rgba(120, 180, 220, 0.06),
+                rgba(140, 200, 240, 0.12),
+                rgba(120, 180, 220, 0.06),
                 transparent
             );
+            box-shadow: 0 0 8px rgba(120, 180, 220, 0.05);
         }
 
         .tine-row {
             display: flex;
             align-items: flex-end;
-            gap: 3px;
-            height: 280px;
+            gap: 4px;
+            height: 420px;
+            padding-bottom: 40px;
         }
 
         .tine {
@@ -205,13 +207,15 @@
             align-items: center;
             cursor: pointer;
             position: relative;
-            padding: 0 4px;
+            padding: 0 6px;
             touch-action: manipulation;
+            flex: 1;
+            max-width: 40px;
         }
 
         .tine-bar {
-            width: 6px;
-            border-radius: 3px 3px 1px 1px;
+            width: 10px;
+            border-radius: 5px 5px 2px 2px;
             background: linear-gradient(
                 to top,
                 rgba(255, 215, 0, 0.15),
@@ -275,9 +279,9 @@
         }
 
         .tine-label {
-            font-size: 0.55rem;
+            font-size: 0.6rem;
             opacity: 0.25;
-            margin-top: 8px;
+            margin-top: 10px;
             font-weight: 300;
             letter-spacing: 0.5px;
         }
@@ -300,16 +304,25 @@
             opacity: 1;
         }
 
-        /* Note particles */
-        .note-particle {
+        /* Shishi-odoshi water drop */
+        .water-drop {
             position: fixed;
-            width: 3px;
-            height: 3px;
-            background: rgba(255, 215, 0, 0.9);
-            border-radius: 50%;
-            box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+            width: 4px;
+            height: 6px;
+            background: radial-gradient(ellipse, rgba(160, 210, 240, 0.9), rgba(120, 180, 220, 0.4));
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             pointer-events: none;
             z-index: 20;
+            will-change: transform, opacity;
+        }
+
+        /* Water ripple ring */
+        .water-ripple {
+            position: fixed;
+            border-radius: 50%;
+            border: 1px solid rgba(140, 200, 240, 0.5);
+            pointer-events: none;
+            z-index: 19;
             will-change: transform, opacity;
         }
 
@@ -340,10 +353,6 @@
         [data-current-instrument="kagura"] .tine.sustained .tine-bar {
             background: linear-gradient(to top, rgba(200, 180, 255, 0.4), rgba(200, 180, 255, 0.1));
         }
-        [data-current-instrument="kagura"] .note-particle {
-            background: rgba(200, 180, 255, 0.9);
-            box-shadow: 0 0 6px rgba(200, 180, 255, 0.6);
-        }
 
         [data-current-instrument="orin"] .tine-bar {
             background: linear-gradient(to top, rgba(180, 220, 255, 0.15), rgba(255, 255, 255, 0.08));
@@ -358,10 +367,6 @@
         }
         [data-current-instrument="orin"] .tine.sustained .tine-bar {
             background: linear-gradient(to top, rgba(180, 220, 255, 0.4), rgba(180, 220, 255, 0.1));
-        }
-        [data-current-instrument="orin"] .note-particle {
-            background: rgba(180, 220, 255, 0.9);
-            box-shadow: 0 0 6px rgba(180, 220, 255, 0.6);
         }
 
         [data-current-instrument="bonsho"] .tine-bar {
@@ -378,10 +383,6 @@
         [data-current-instrument="bonsho"] .tine.sustained .tine-bar {
             background: linear-gradient(to top, rgba(255, 180, 140, 0.4), rgba(255, 180, 140, 0.1));
         }
-        [data-current-instrument="bonsho"] .note-particle {
-            background: rgba(255, 180, 140, 0.9);
-            box-shadow: 0 0 6px rgba(255, 180, 140, 0.6);
-        }
 
         /* Controls strip - inline, not fixed */
         .controls-strip {
@@ -390,7 +391,7 @@
             padding: 20px 30px;
             justify-content: center;
             align-items: center;
-            margin-top: 50px;
+            margin-top: 30px;
             opacity: 0.6;
             transition: opacity 0.3s;
         }
@@ -609,12 +610,17 @@
             }
 
             .tine-row {
-                height: 200px;
-                gap: 4px;
+                height: 250px;
+                gap: 3px;
+                padding-bottom: 30px;
             }
 
             .tine-bar {
                 width: 8px;
+            }
+
+            .tine {
+                padding: 0 3px;
             }
 
             .tine-label {
@@ -947,11 +953,10 @@
 
         // Detect mobile
         const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        const maxParticlesPerNote = isMobile ? 2 : 4;
 
-        // Particle tracking
-        let activeParticleCount = 0;
-        const MAX_ACTIVE_PARTICLES = 30;
+        // Water effect tracking
+        let activeEffectCount = 0;
+        const MAX_ACTIVE_EFFECTS = 20;
 
         // Create starfield
         function createStarfield() {
@@ -994,54 +999,97 @@
             }, interval);
         }
 
-        // Create note particles from tine tip
-        function createNoteParticles(tineElement) {
-            if (activeParticleCount >= MAX_ACTIVE_PARTICLES) return;
+        // Shishi-odoshi water drop + ripple effect
+        function createWaterEffect(tineElement) {
+            if (activeEffectCount >= MAX_ACTIVE_EFFECTS) return;
 
-            const rect = tineElement.querySelector('.tine-bar').getBoundingClientRect();
-            const startX = rect.left + rect.width / 2;
-            const startY = rect.top;
+            const barRect = tineElement.querySelector('.tine-bar').getBoundingClientRect();
+            const dropX = barRect.left + barRect.width / 2;
+            const dropStartY = barRect.top;
 
-            const count = Math.floor(Math.random() * 2) + maxParticlesPerNote - 1;
+            // Find the water surface (bottom of tines-container)
+            const container = document.querySelector('.tines-container');
+            const containerRect = container.getBoundingClientRect();
+            const surfaceY = containerRect.bottom - 42; // align with ::after baseline
 
-            for (let i = 0; i < count; i++) {
-                if (activeParticleCount >= MAX_ACTIVE_PARTICLES) break;
+            const fallDistance = surfaceY - dropStartY;
+            if (fallDistance <= 0) return;
 
-                const particle = document.createElement('div');
-                particle.className = 'note-particle';
-                particle.style.left = startX + 'px';
-                particle.style.top = startY + 'px';
+            // Create water drop
+            const drop = document.createElement('div');
+            drop.className = 'water-drop';
+            drop.style.left = dropX + 'px';
+            drop.style.top = dropStartY + 'px';
+            document.body.appendChild(drop);
+            activeEffectCount++;
 
-                const driftX = (Math.random() - 0.5) * 60;
-                const driftY = -(Math.random() * 80 + 40);
-                const duration = 1000 + Math.random() * 500;
-                const delay = i * 50;
+            // Drop falls to surface
+            const fallDuration = Math.min(400, Math.max(200, fallDistance * 1.2));
+            const dropAnim = drop.animate([
+                { opacity: 0.8, transform: 'translateY(0) scaleY(1)' },
+                { opacity: 1, transform: `translateY(${fallDistance * 0.7}px) scaleY(1.3)`, offset: 0.8 },
+                { opacity: 0, transform: `translateY(${fallDistance}px) scaleY(0.5) scaleX(1.5)` }
+            ], {
+                duration: fallDuration,
+                easing: 'cubic-bezier(0.4, 0, 1, 1)', // accelerate (gravity)
+                fill: 'forwards'
+            });
 
-                document.body.appendChild(particle);
-                activeParticleCount++;
+            dropAnim.onfinish = () => {
+                drop.remove();
+                activeEffectCount--;
 
-                // Use Web Animations API for smooth performance
-                const animation = particle.animate([
-                    {
-                        opacity: 1,
-                        transform: `translate(0, 0) scale(1)`
-                    },
-                    {
-                        opacity: 0,
-                        transform: `translate(${driftX}px, ${driftY}px) scale(0.3)`
-                    }
-                ], {
-                    duration: duration,
-                    delay: delay,
-                    easing: 'ease-out',
-                    fill: 'forwards'
-                });
+                // Spawn ripple rings on "impact"
+                const rippleCount = isMobile ? 2 : 3;
+                for (let i = 0; i < rippleCount; i++) {
+                    if (activeEffectCount >= MAX_ACTIVE_EFFECTS) break;
+                    createRipple(dropX, surfaceY, i * 120);
+                }
+            };
+        }
 
-                animation.onfinish = () => {
-                    particle.remove();
-                    activeParticleCount--;
-                };
-            }
+        function createRipple(x, y, delay) {
+            const ripple = document.createElement('div');
+            ripple.className = 'water-ripple';
+            const size = 4;
+            ripple.style.left = (x - size / 2) + 'px';
+            ripple.style.top = (y - size / 2) + 'px';
+            ripple.style.width = size + 'px';
+            ripple.style.height = size + 'px';
+            document.body.appendChild(ripple);
+            activeEffectCount++;
+
+            const maxSize = 40 + Math.random() * 20;
+            const duration = 800 + Math.random() * 400;
+
+            const anim = ripple.animate([
+                {
+                    width: size + 'px',
+                    height: size + 'px',
+                    left: (x - size / 2) + 'px',
+                    top: (y - size / 2) + 'px',
+                    opacity: 0.6,
+                    borderWidth: '1.5px'
+                },
+                {
+                    width: maxSize + 'px',
+                    height: (maxSize * 0.4) + 'px',
+                    left: (x - maxSize / 2) + 'px',
+                    top: (y - maxSize * 0.2) + 'px',
+                    opacity: 0,
+                    borderWidth: '0.5px'
+                }
+            ], {
+                duration: duration,
+                delay: delay,
+                easing: 'ease-out',
+                fill: 'forwards'
+            });
+
+            anim.onfinish = () => {
+                ripple.remove();
+                activeEffectCount--;
+            };
         }
 
         // Initialize audio context
@@ -1228,10 +1276,10 @@
                 }
             });
 
-            // Visual feedback - particles from the struck tine
+            // Visual feedback - water drop from struck tine
             const tineEl = document.querySelector(`[data-noteindex="${noteIndex}"]`);
             if (tineEl) {
-                createNoteParticles(tineEl);
+                createWaterEffect(tineEl);
 
                 // Strike animation
                 tineEl.classList.add('struck');
@@ -1272,8 +1320,8 @@
 
             const keyMapping = new Map();
             const totalNotes = tineKeys.length;
-            const minHeight = 60;
-            const maxHeight = 250;
+            const minHeight = 80;
+            const maxHeight = 370;
 
             tineKeys.forEach((key, noteIndex) => {
                 const tine = document.createElement('div');
