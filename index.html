@@ -178,7 +178,7 @@
         .tines-container::after {
             content: '';
             position: absolute;
-            bottom: 38px;
+            bottom: 0;
             left: 5%;
             right: 5%;
             height: 2px;
@@ -195,7 +195,7 @@
 
         .tine-row {
             display: flex;
-            align-items: flex-end;
+            align-items: flex-start;
             gap: 4px;
             height: 420px;
             padding-bottom: 40px;
@@ -215,16 +215,16 @@
 
         .tine-bar {
             width: 10px;
-            border-radius: 5px 5px 2px 2px;
+            border-radius: 2px 2px 5px 5px;
             background: linear-gradient(
-                to top,
+                to bottom,
                 rgba(255, 215, 0, 0.15),
                 rgba(255, 255, 255, 0.08)
             );
             border: 1px solid rgba(255, 255, 255, 0.06);
             transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
             will-change: transform;
-            transform-origin: bottom;
+            transform-origin: top;
         }
 
         .tine:hover .tine-bar {
@@ -275,7 +275,7 @@
 
         .tine.struck .tine-bar {
             animation: tineStrike 0.4s ease-out;
-            transform-origin: bottom;
+            transform-origin: top;
         }
 
         .tine-label {
@@ -294,7 +294,7 @@
             font-size: 0.5rem;
             opacity: 0;
             position: absolute;
-            top: -18px;
+            top: -16px;
             transition: opacity 0.2s;
             color: rgba(255, 215, 0, 0.7);
             white-space: nowrap;
@@ -328,60 +328,60 @@
 
         /* Instrument-specific tine colors */
         [data-current-instrument="furin"] .tine-bar {
-            background: linear-gradient(to top, rgba(255, 215, 0, 0.15), rgba(255, 255, 255, 0.08));
+            background: linear-gradient(to bottom, rgba(255, 215, 0, 0.15), rgba(255, 255, 255, 0.08));
         }
         [data-current-instrument="furin"] .tine:hover .tine-bar {
-            background: linear-gradient(to top, rgba(255, 215, 0, 0.25), rgba(255, 255, 255, 0.12));
+            background: linear-gradient(to bottom, rgba(255, 215, 0, 0.25), rgba(255, 255, 255, 0.12));
             box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
         }
         [data-current-instrument="furin"] .tine.active .tine-bar {
-            background: linear-gradient(to top, rgba(255, 215, 0, 0.6), rgba(255, 215, 0, 0.2));
+            background: linear-gradient(to bottom, rgba(255, 215, 0, 0.6), rgba(255, 215, 0, 0.2));
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.15);
         }
 
         [data-current-instrument="kagura"] .tine-bar {
-            background: linear-gradient(to top, rgba(200, 180, 255, 0.15), rgba(255, 255, 255, 0.08));
+            background: linear-gradient(to bottom, rgba(200, 180, 255, 0.15), rgba(255, 255, 255, 0.08));
         }
         [data-current-instrument="kagura"] .tine:hover .tine-bar {
-            background: linear-gradient(to top, rgba(200, 180, 255, 0.25), rgba(255, 255, 255, 0.12));
+            background: linear-gradient(to bottom, rgba(200, 180, 255, 0.25), rgba(255, 255, 255, 0.12));
             box-shadow: 0 0 12px rgba(200, 180, 255, 0.15);
         }
         [data-current-instrument="kagura"] .tine.active .tine-bar {
-            background: linear-gradient(to top, rgba(200, 180, 255, 0.6), rgba(200, 180, 255, 0.2));
+            background: linear-gradient(to bottom, rgba(200, 180, 255, 0.6), rgba(200, 180, 255, 0.2));
             box-shadow: 0 0 20px rgba(200, 180, 255, 0.4), 0 0 40px rgba(200, 180, 255, 0.15);
         }
         [data-current-instrument="kagura"] .tine.sustained .tine-bar {
-            background: linear-gradient(to top, rgba(200, 180, 255, 0.4), rgba(200, 180, 255, 0.1));
+            background: linear-gradient(to bottom, rgba(200, 180, 255, 0.4), rgba(200, 180, 255, 0.1));
         }
 
         [data-current-instrument="orin"] .tine-bar {
-            background: linear-gradient(to top, rgba(180, 220, 255, 0.15), rgba(255, 255, 255, 0.08));
+            background: linear-gradient(to bottom, rgba(180, 220, 255, 0.15), rgba(255, 255, 255, 0.08));
         }
         [data-current-instrument="orin"] .tine:hover .tine-bar {
-            background: linear-gradient(to top, rgba(180, 220, 255, 0.25), rgba(255, 255, 255, 0.12));
+            background: linear-gradient(to bottom, rgba(180, 220, 255, 0.25), rgba(255, 255, 255, 0.12));
             box-shadow: 0 0 12px rgba(180, 220, 255, 0.15);
         }
         [data-current-instrument="orin"] .tine.active .tine-bar {
-            background: linear-gradient(to top, rgba(180, 220, 255, 0.6), rgba(180, 220, 255, 0.2));
+            background: linear-gradient(to bottom, rgba(180, 220, 255, 0.6), rgba(180, 220, 255, 0.2));
             box-shadow: 0 0 20px rgba(180, 220, 255, 0.4), 0 0 40px rgba(180, 220, 255, 0.15);
         }
         [data-current-instrument="orin"] .tine.sustained .tine-bar {
-            background: linear-gradient(to top, rgba(180, 220, 255, 0.4), rgba(180, 220, 255, 0.1));
+            background: linear-gradient(to bottom, rgba(180, 220, 255, 0.4), rgba(180, 220, 255, 0.1));
         }
 
         [data-current-instrument="bonsho"] .tine-bar {
-            background: linear-gradient(to top, rgba(255, 180, 140, 0.15), rgba(255, 255, 255, 0.08));
+            background: linear-gradient(to bottom, rgba(255, 180, 140, 0.15), rgba(255, 255, 255, 0.08));
         }
         [data-current-instrument="bonsho"] .tine:hover .tine-bar {
-            background: linear-gradient(to top, rgba(255, 180, 140, 0.25), rgba(255, 255, 255, 0.12));
+            background: linear-gradient(to bottom, rgba(255, 180, 140, 0.25), rgba(255, 255, 255, 0.12));
             box-shadow: 0 0 12px rgba(255, 180, 140, 0.15);
         }
         [data-current-instrument="bonsho"] .tine.active .tine-bar {
-            background: linear-gradient(to top, rgba(255, 180, 140, 0.6), rgba(255, 180, 140, 0.2));
+            background: linear-gradient(to bottom, rgba(255, 180, 140, 0.6), rgba(255, 180, 140, 0.2));
             box-shadow: 0 0 20px rgba(255, 180, 140, 0.4), 0 0 40px rgba(255, 180, 140, 0.15);
         }
         [data-current-instrument="bonsho"] .tine.sustained .tine-bar {
-            background: linear-gradient(to top, rgba(255, 180, 140, 0.4), rgba(255, 180, 140, 0.1));
+            background: linear-gradient(to bottom, rgba(255, 180, 140, 0.4), rgba(255, 180, 140, 0.1));
         }
 
         /* Controls strip - inline, not fixed */
@@ -999,18 +999,16 @@
             }, interval);
         }
 
-        // Shishi-odoshi water drop + ripple effect
+        // Shishi-odoshi water drop + ripple effect — slow zen fall
         function createWaterEffect(tineElement) {
             if (activeEffectCount >= MAX_ACTIVE_EFFECTS) return;
 
             const barRect = tineElement.querySelector('.tine-bar').getBoundingClientRect();
             const dropX = barRect.left + barRect.width / 2;
-            const dropStartY = barRect.top;
+            const dropStartY = barRect.top; // top of bar (where the note is struck)
 
-            // Find the water surface (bottom of tines-container)
-            const container = document.querySelector('.tines-container');
-            const containerRect = container.getBoundingClientRect();
-            const surfaceY = containerRect.bottom - 42; // align with ::after baseline
+            // Water surface = bottom of the bar
+            const surfaceY = barRect.bottom;
 
             const fallDistance = surfaceY - dropStartY;
             if (fallDistance <= 0) return;
@@ -1023,15 +1021,17 @@
             document.body.appendChild(drop);
             activeEffectCount++;
 
-            // Drop falls to surface
-            const fallDuration = Math.min(400, Math.max(200, fallDistance * 1.2));
+            // Slow, meditative fall — duration scales with bar height
+            const fallDuration = Math.max(1200, fallDistance * 5);
             const dropAnim = drop.animate([
-                { opacity: 0.8, transform: 'translateY(0) scaleY(1)' },
-                { opacity: 1, transform: `translateY(${fallDistance * 0.7}px) scaleY(1.3)`, offset: 0.8 },
-                { opacity: 0, transform: `translateY(${fallDistance}px) scaleY(0.5) scaleX(1.5)` }
+                { opacity: 0, transform: 'translateY(0) scaleY(0.6)', offset: 0 },
+                { opacity: 0.9, transform: 'translateY(4px) scaleY(1)', offset: 0.05 },
+                { opacity: 0.8, transform: `translateY(${fallDistance * 0.5}px) scaleY(1.1)`, offset: 0.6 },
+                { opacity: 0.6, transform: `translateY(${fallDistance * 0.85}px) scaleY(1.2)`, offset: 0.9 },
+                { opacity: 0, transform: `translateY(${fallDistance}px) scaleY(0.5) scaleX(1.5)`, offset: 1 }
             ], {
                 duration: fallDuration,
-                easing: 'cubic-bezier(0.4, 0, 1, 1)', // accelerate (gravity)
+                easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)', // gentle ease
                 fill: 'forwards'
             });
 
@@ -1039,11 +1039,11 @@
                 drop.remove();
                 activeEffectCount--;
 
-                // Spawn ripple rings on "impact"
+                // Spawn gentle ripple rings on "impact"
                 const rippleCount = isMobile ? 2 : 3;
                 for (let i = 0; i < rippleCount; i++) {
                     if (activeEffectCount >= MAX_ACTIVE_EFFECTS) break;
-                    createRipple(dropX, surfaceY, i * 120);
+                    createRipple(dropX, surfaceY, i * 200);
                 }
             };
         }
@@ -1060,7 +1060,7 @@
             activeEffectCount++;
 
             const maxSize = 40 + Math.random() * 20;
-            const duration = 800 + Math.random() * 400;
+            const duration = 1400 + Math.random() * 600;
 
             const anim = ripple.animate([
                 {
