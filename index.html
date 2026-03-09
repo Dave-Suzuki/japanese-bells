@@ -1361,11 +1361,6 @@
                     } else {
                         const sustain = e.ctrlKey || e.metaKey;
                         playBell(idx, e.shiftKey ? 1.2 : 1.0, sustain);
-
-                        if (!sustain) {
-                            tine.classList.add('active');
-                            setTimeout(() => tine.classList.remove('active'), 200);
-                        }
                     }
                 });
 
@@ -1381,8 +1376,6 @@
                         stopSustainedNote(noteKey);
                     } else {
                         playBell(idx, 1.0, false);
-                        tine.classList.add('active');
-                        setTimeout(() => tine.classList.remove('active'), 200);
                     }
                 });
 
@@ -1414,8 +1407,6 @@
                         lastPlayedTine = tine;
                         const idx = parseInt(tine.dataset.noteindex);
                         playBell(idx, 0.8, false);
-                        tine.classList.add('active');
-                        setTimeout(() => tine.classList.remove('active'), 200);
                     }
                 }
             });
@@ -1508,11 +1499,6 @@
                     } else {
                         const sustain = e.ctrlKey || e.metaKey;
                         playBell(noteIndex, e.shiftKey ? 1.2 : 1.0, sustain);
-
-                        if (tineElement && !sustain) {
-                            tineElement.classList.add('active');
-                            setTimeout(() => tineElement.classList.remove('active'), 200);
-                        }
                     }
                 }
             }
@@ -1768,12 +1754,6 @@
                 const sustainPedal = midiNoteMap.get('sustain') || false;
 
                 playBell(noteIndex, normalizedVelocity, sustainPedal);
-
-                const tineElement = document.querySelector(`[data-noteindex="${noteIndex}"]`);
-                if (tineElement) {
-                    tineElement.classList.add('active');
-                    setTimeout(() => tineElement.classList.remove('active'), 200);
-                }
 
                 midiNoteMap.set(midiNote, noteIndex);
             }
