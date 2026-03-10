@@ -111,7 +111,7 @@
         }
 
         .subtitle {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             opacity: 0.35;
             font-weight: 300;
             letter-spacing: 4px;
@@ -407,14 +407,14 @@
         }
 
         .control-label {
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             opacity: 0.4;
         }
 
         .control-value {
-            font-size: 0.65rem;
+            font-size: 0.75rem;
             opacity: 0.6;
             min-width: 20px;
             text-align: center;
@@ -576,12 +576,19 @@
 
         /* Responsive - Tablet */
         @media (max-width: 768px) {
+            body {
+                align-items: flex-start;
+            }
+
             .app-container {
-                padding: 30px 20px;
+                padding: 20px 15px;
+                min-height: 100vh;
+                min-height: 100dvh;
+                justify-content: flex-start;
             }
 
             .header {
-                margin-bottom: 15px;
+                margin-bottom: 10px;
             }
 
             .title {
@@ -590,12 +597,15 @@
             }
 
             .main-panel {
-                gap: 30px;
+                flex: 1;
+                gap: 20px;
+                justify-content: center;
             }
 
             .config-bar {
                 flex-direction: column;
                 gap: 12px;
+                margin-bottom: 12px;
             }
 
             .instrument-selector {
@@ -605,11 +615,11 @@
 
             .instrument-tab {
                 padding: 6px 12px;
-                font-size: 0.7rem;
+                font-size: 0.75rem;
             }
 
             .tine-row {
-                height: 250px;
+                height: 280px;
                 gap: 3px;
                 padding-bottom: 30px;
             }
@@ -631,7 +641,7 @@
                 padding: 15px 20px;
                 flex-wrap: wrap;
                 opacity: 1;
-                margin-top: 30px;
+                margin-top: 15px;
             }
 
             .control-group {
@@ -639,12 +649,12 @@
             }
 
             .control-label {
-                font-size: 0.55rem;
+                font-size: 0.7rem;
             }
 
             .scale-current {
                 padding: 5px 10px;
-                font-size: 0.65rem;
+                font-size: 0.75rem;
                 min-width: 70px;
             }
 
@@ -663,17 +673,29 @@
         /* Responsive - Phone */
         @media (max-width: 480px) {
             .app-container {
-                padding: 20px 10px;
+                padding: 15px 10px;
+            }
+
+            .header {
+                margin-bottom: 8px;
+            }
+
+            .config-bar {
+                margin-bottom: 10px;
             }
 
             .title {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
                 letter-spacing: 4px;
             }
 
             .subtitle {
-                font-size: 0.65rem;
+                font-size: 0.75rem;
                 letter-spacing: 2px;
+            }
+
+            .main-panel {
+                gap: 15px;
             }
 
             .tine-row {
@@ -691,16 +713,17 @@
 
             .instrument-tab {
                 padding: 5px 10px;
-                font-size: 0.65rem;
+                font-size: 0.7rem;
             }
 
             .controls-strip {
                 gap: 15px;
                 padding: 12px 15px;
+                margin-top: 10px;
             }
 
             .control-label {
-                font-size: 0.5rem;
+                font-size: 0.65rem;
             }
         }
 
