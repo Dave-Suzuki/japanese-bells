@@ -598,8 +598,17 @@
 
             .main-panel {
                 flex: 1;
-                gap: 20px;
-                justify-content: center;
+                gap: 0;
+            }
+
+            .tines-container {
+                flex: 1;
+            }
+
+            .tine-row {
+                height: 100%;
+                gap: 3px;
+                padding-bottom: 20px;
             }
 
             .config-bar {
@@ -616,12 +625,6 @@
             .instrument-tab {
                 padding: 6px 12px;
                 font-size: 0.75rem;
-            }
-
-            .tine-row {
-                height: 280px;
-                gap: 3px;
-                padding-bottom: 30px;
             }
 
             .tine-bar {
@@ -641,7 +644,8 @@
                 padding: 15px 20px;
                 flex-wrap: wrap;
                 opacity: 1;
-                margin-top: 15px;
+                margin-top: 0;
+                flex-shrink: 0;
             }
 
             .control-group {
@@ -694,12 +698,7 @@
                 letter-spacing: 2px;
             }
 
-            .main-panel {
-                gap: 15px;
-            }
-
             .tine-row {
-                height: 150px;
                 gap: 3px;
             }
 
@@ -719,7 +718,6 @@
             .controls-strip {
                 gap: 15px;
                 padding: 12px 15px;
-                margin-top: 10px;
             }
 
             .control-label {
@@ -730,7 +728,6 @@
         /* Responsive - Small phone */
         @media (max-width: 360px) {
             .tine-row {
-                height: 120px;
                 gap: 2px;
             }
 
@@ -761,12 +758,7 @@
                 gap: 15px;
             }
 
-            .tine-row {
-                height: 140px;
-            }
-
             .controls-strip {
-                margin-top: 15px;
                 padding: 10px 20px;
             }
 
