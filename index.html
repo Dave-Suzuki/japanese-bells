@@ -584,14 +584,14 @@
             }
 
             .app-container {
-                padding: 20px 15px;
+                padding: 12px 10px;
                 min-height: 100vh;
                 min-height: 100dvh;
                 justify-content: flex-start;
             }
 
             .header {
-                margin-bottom: 10px;
+                margin-bottom: 4px;
             }
 
             .title {
@@ -602,23 +602,26 @@
             .main-panel {
                 flex: 1;
                 gap: 0;
-                padding-top: 15vh;
+                padding-top: 0;
             }
 
             .tines-container {
                 flex: 1;
+                width: 100%;
             }
 
             .tine-row {
                 height: 100%;
-                gap: 3px;
-                padding-bottom: 20px;
+                gap: 0;
+                padding-bottom: 10px;
+                width: 100%;
+                justify-content: space-evenly;
             }
 
             .config-bar {
                 flex-direction: column;
-                gap: 12px;
-                margin-bottom: 12px;
+                gap: 8px;
+                margin-bottom: 6px;
             }
 
             .instrument-selector {
@@ -637,6 +640,7 @@
 
             .tine {
                 padding: 0 3px;
+                min-width: 14px;
             }
 
             .tine-label {
@@ -644,8 +648,8 @@
             }
 
             .controls-strip {
-                gap: 20px;
-                padding: 15px 20px;
+                gap: 12px;
+                padding: 10px 15px;
                 flex-wrap: wrap;
                 opacity: 1;
                 margin-top: 0;
@@ -653,11 +657,16 @@
             }
 
             .control-group {
-                gap: 4px;
+                gap: 3px;
             }
 
             .control-label {
                 font-size: 0.7rem;
+            }
+
+            .knob {
+                width: 36px;
+                height: 36px;
             }
 
             .scale-name {
@@ -666,9 +675,13 @@
             }
 
             .scale-arrow {
-                width: 28px;
-                height: 28px;
+                width: 26px;
+                height: 26px;
                 font-size: 0.8rem;
+            }
+
+            .scale-selector {
+                gap: 8px;
             }
 
             .info {
@@ -686,37 +699,34 @@
         /* Responsive - Phone */
         @media (max-width: 480px) {
             .app-container {
-                padding: 15px 10px;
+                padding: 10px 4px;
             }
 
             .header {
-                margin-bottom: 8px;
+                margin-bottom: 4px;
             }
 
             .config-bar {
-                margin-bottom: 10px;
+                margin-bottom: 6px;
             }
 
             .title {
-                font-size: 1.4rem;
+                font-size: 1.2rem;
                 letter-spacing: 4px;
             }
 
             .subtitle {
-                font-size: 0.75rem;
+                font-size: 0.7rem;
                 letter-spacing: 2px;
             }
 
-            .tine-row {
-                gap: 3px;
-            }
-
             .tine-bar {
-                width: 6px;
+                width: 8px;
             }
 
             .tine {
-                padding: 0 2px;
+                padding: 0 1px;
+                min-width: 14px;
             }
 
             .instrument-tab {
@@ -725,12 +735,32 @@
             }
 
             .controls-strip {
-                gap: 15px;
-                padding: 12px 15px;
+                gap: 8px;
+                padding: 8px 10px;
+            }
+
+            .knob {
+                width: 32px;
+                height: 32px;
             }
 
             .control-label {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
+            }
+
+            .scale-name {
+                font-size: 0.8rem;
+                min-width: 70px;
+            }
+
+            .scale-arrow {
+                width: 24px;
+                height: 24px;
+                font-size: 0.75rem;
+            }
+
+            .scale-notes {
+                font-size: 0.55rem;
             }
         }
 
