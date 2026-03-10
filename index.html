@@ -445,52 +445,55 @@
 
         /* Scale selector */
         .scale-selector {
-            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: pan-y;
         }
 
-        .scale-current {
-            padding: 6px 12px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            min-width: 80px;
-            text-align: center;
-        }
-
-        .scale-dropdown {
-            display: none;
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-bottom: 8px;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            z-index: 100;
-        }
-
-        .scale-dropdown.active {
-            display: block;
-        }
-
-        .scale-option {
-            padding: 8px 16px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .scale-option:hover {
+        .scale-arrow {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        .scale-option.active {
-            background: rgba(255,215,0,0.1);
+        .scale-arrow:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .scale-arrow:active {
+            transform: scale(0.9);
+        }
+
+        .scale-name {
+            font-size: 1rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            min-width: 100px;
+            text-align: center;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .scale-notes {
+            font-size: 0.6rem;
+            opacity: 0.4;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-top: 2px;
         }
 
         /* Octave buttons */
@@ -599,6 +602,7 @@
             .main-panel {
                 flex: 1;
                 gap: 0;
+                padding-top: 15vh;
             }
 
             .tines-container {
@@ -656,10 +660,15 @@
                 font-size: 0.7rem;
             }
 
-            .scale-current {
-                padding: 5px 10px;
-                font-size: 0.75rem;
-                min-width: 70px;
+            .scale-name {
+                font-size: 0.9rem;
+                min-width: 80px;
+            }
+
+            .scale-arrow {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
             }
 
             .info {
@@ -798,18 +807,14 @@
                 <div class="instrument-tab" data-instrument="bonsho">Bonshō</div>
             </div>
 
-            <!-- Scale selector -->
-            <div class="scale-selector">
-                <div class="scale-current" id="scale-current">Hirajoshi</div>
-                <div class="scale-dropdown" id="scale-dropdown">
-                    <div class="scale-option active" data-scale="hirajoshi">Hirajoshi</div>
-                    <div class="scale-option" data-scale="yo">Yo</div>
-                    <div class="scale-option" data-scale="in">In</div>
-                    <div class="scale-option" data-scale="iwato">Iwato</div>
-                    <div class="scale-option" data-scale="akebono">Akebono</div>
-                    <div class="scale-option" data-scale="okinawa">Okinawa</div>
-                    <div class="scale-option" data-scale="chromatic">Chromatic</div>
+            <!-- Scale selector - swipe style -->
+            <div class="scale-selector" id="scale-selector">
+                <div class="scale-arrow" id="scale-prev">‹</div>
+                <div class="scale-display">
+                    <div class="scale-name" id="scale-name">Hirajoshi</div>
+                    <div class="scale-notes" id="scale-notes">C, D, E♭, G, A♭</div>
                 </div>
+                <div class="scale-arrow" id="scale-next">›</div>
             </div>
         </div>
 
@@ -1557,35 +1562,43 @@
             });
         });
 
-        // Scale selector dropdown
-        const scaleDropdown = document.getElementById('scale-dropdown');
-        const scaleCurrent = document.getElementById('scale-current');
+        // Scale selector - arrow/swipe navigation
+        const scaleKeys = Object.keys(scales);
+        const scaleNameEl = document.getElementById('scale-name');
+        const scaleNotesEl = document.getElementById('scale-notes');
+        const scaleSelector = document.getElementById('scale-selector');
 
-        scaleCurrent.addEventListener('click', () => {
-            scaleDropdown.classList.toggle('active');
-        });
+        function setScale(key) {
+            currentScale = key;
+            scaleNameEl.textContent = scales[key].name;
+            scaleNotesEl.textContent = scales[key].notes;
 
-        document.querySelectorAll('.scale-option').forEach(option => {
-            option.addEventListener('click', () => {
-                document.querySelector('.scale-option.active').classList.remove('active');
-                option.classList.add('active');
-                currentScale = option.dataset.scale;
-                scaleCurrent.textContent = scales[currentScale].name;
-                scaleDropdown.classList.remove('active');
-
-                sustainedNotes.forEach((note, key) => {
-                    stopSustainedNote(key);
-                });
-
-                keyMapping = createKeyboard();
-                setupGlissando();
+            sustainedNotes.forEach((note, k) => {
+                stopSustainedNote(k);
             });
-        });
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.scale-selector')) {
-                scaleDropdown.classList.remove('active');
+            keyMapping = createKeyboard();
+            setupGlissando();
+        }
+
+        function cycleScale(direction) {
+            const idx = scaleKeys.indexOf(currentScale);
+            const next = (idx + direction + scaleKeys.length) % scaleKeys.length;
+            setScale(scaleKeys[next]);
+        }
+
+        document.getElementById('scale-prev').addEventListener('click', () => cycleScale(-1));
+        document.getElementById('scale-next').addEventListener('click', () => cycleScale(1));
+
+        // Swipe support on scale selector
+        let scaleTouchStartX = 0;
+        scaleSelector.addEventListener('touchstart', (e) => {
+            scaleTouchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        scaleSelector.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - scaleTouchStartX;
+            if (Math.abs(dx) > 30) {
+                cycleScale(dx < 0 ? 1 : -1);
             }
         });
 
